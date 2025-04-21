@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Meu SaaS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-saira">
+    <div class="max-w-4xl mx-auto p-8 space-y-6 font-saira">
+        <img src="https://static.wixstatic.com/media/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png/v1/fill/w_205,h_47,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png" class="w-48 mx-auto mb-8">
+        <div class="bg-[#06618E]/10 border-l-4 border-[#06618E] p-6 rounded-xl shadow-md mb-8">
+    <h2 class="font-semibold text-lg">Valor do seu Plano Mensal</h2>
+    <p class="text-2xl font-bold"><span id="valorPlano"></span>/mês</p>
+</div>
+<h1 class="text-3xl font-bold text-center mb-8 text-[#06618E]">Finalizar Assinatura</h1>
+        
+        <form id="checkoutForm">
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Dados do Cliente</h2>
+                
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">Nome Completo:</label>
+                        <input type="text" id="nomeInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#06618E] focus:border-[#06618E] transition-colors" required>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">CPF/CNPJ:</label>
+                        <input type="text" id="cpfCnpj" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#06618E] focus:border-[#06618E] transition-colors" required>
+                    </div>
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-2 mt-4">
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">E-mail:</label>
+                        <input type="email" id="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#06618E] focus:border-[#06618E] transition-colors" required>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">Telefone:</label>
+                        <input type="tel" id="telefone" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#06618E] focus:border-[#06618E] transition-colors" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Dados de Pagamento</h2>
+                
+                <div class="space-y-2">
+                    <label class="block text-gray-700 font-medium">Número do Cartão:</label>
+                    <input type="text" id="numeroCartao" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#06618E] focus:border-[#06618E] transition-colors" required>
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-2 mt-4">
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">Validade:</label>
+                        <input type="text" id="validade" placeholder="MM/AA" class="w-full p-3 border-2 border-[#06618E]/20 rounded-lg" required>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">CVC:</label>
+                        <input type="text" id="cvc" class="w-full p-3 border-2 border-[#06618E]/20 rounded-lg" required>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-gray-700 font-medium">Nome do Titular:</label>
+                    <input type="text" id="nomeTitular" class="w-full p-3 border-2 border-[#06618E]/20 rounded-lg" required>
+                </div>
+            </div>
+
+            <input type="hidden" id="valorAssinatura">
+            
+            <button type="submit" id="submitBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
+                Confirmar Pagamento →
+            </button>
+        </form>
+    </div>
+
+    <!-- Modal de Erro -->
+    <div id="errorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-semibold text-red-600">Erro no Processamento</h3>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mb-4">
+                <p id="errorMessage" class="text-gray-700"></p>
+            </div>
+            <div class="text-right">
+                <button id="confirmModal" class="bg-[#06618E] hover:bg-[#054e73] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                    Entendi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Capturar valor da assinatura da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const valor = urlParams.get('valor');
+        document.getElementById('valorAssinatura').value = valor;
+const valorNumerico = parseFloat(valor);
+document.getElementById('valorPlano').textContent = valorNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // Integração com API Asaas
+        document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const dados = {
+                customer: {
+                    name: document.getElementById('nomeInput').value,
+                    cpfCnpj: document.getElementById('cpfCnpj').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('telefone').value
+                },
+                billingType: 'CREDIT_CARD',
+                cycle: 'MONTHLY',
+                nextDueDate: new Date().toISOString().split('T')[0],
+                value: parseFloat(valor),
+                creditCard: {
+                    holderName: document.getElementById('nomeTitular').value,
+                    number: document.getElementById('numeroCartao').value.replace(/\s+/g, ''),
+                    expiryMonth: document.getElementById('validade').value.split('/')[0],
+                    expiryYear: '20' + document.getElementById('validade').value.split('/')[1],
+                    ccv: document.getElementById('cvc').value
+                },
+                creditCardHolderInfo: {
+                    name: document.getElementById('nomeInput').value,
+                    email: document.getElementById('email').value,
+                    cpfCnpj: document.getElementById('cpfCnpj').value,
+                    postalCode: '00000-000', // Adicionar campo no formulário se necessário
+                    addressNumber: '0',       // Adicionar campo no formulário se necessário
+                    phone: document.getElementById('telefone').value
+                },
+                description: 'Assinatura Mensal'
+            };
+
+            try {
+                const response = await fetch('https://sandbox.asaas.com/api/v3/subscriptions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'access_token': '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwNTc3MDg6OiRhYWNoXzc0ZDM5ZWE4LTU1OTYtNDY5Ni05YTRlLTg3ZTU0YzM5YWE0Mg==' // Token de sandbox
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await response.json();
+                if(resultado.errors) {
+                    showErrorModal(`${resultado.errors[0].description}`);
+                } else {
+                    window.location.href = `/sucesso.html?id=${resultado.id}`;
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showErrorModal('Erro ao processar pagamento. Por favor, tente novamente.');
+            }
+        });
+
+        // Funções para controlar o modal de erro
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorModal').classList.remove('hidden');
+            document.getElementById('errorModal').classList.add('flex');
+        }
+
+        function closeErrorModal() {
+            document.getElementById('errorModal').classList.remove('flex');
+            document.getElementById('errorModal').classList.add('hidden');
+        }
+
+        // Event listeners para fechar o modal
+        document.getElementById('closeModal').addEventListener('click', closeErrorModal);
+        document.getElementById('confirmModal').addEventListener('click', closeErrorModal);
+    </script>
+</body>
+</html>

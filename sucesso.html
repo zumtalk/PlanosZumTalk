@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Confirmado - Meu SaaS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-saira">
+    <div class="max-w-4xl mx-auto p-8 space-y-6">
+        <img src="https://static.wixstatic.com/media/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png/v1/fill/w_205,h_47,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png" class="w-48 mx-auto mb-8">
+        
+        <div class="bg-white shadow-md rounded-lg p-8 text-center">
+            <div class="mb-6">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <h1 class="text-3xl font-bold text-[#06618E] mb-4">Pagamento Confirmado!</h1>
+            <p class="text-gray-600 mb-6">Sua assinatura foi processada com sucesso.</p>
+            
+            <div class="bg-[#06618E]/10 p-4 rounded-lg mb-8">
+                <p class="text-sm text-gray-600">ID da Assinatura:</p>
+                <p class="font-mono text-lg font-bold text-[#06618E]" id="assinaturaId"></p>
+            </div>
+            
+            <a href="/planos.html" class="inline-block bg-[#06618E] text-white px-6 py-3 rounded-lg hover:bg-[#054d6e] transition-colors">
+                ← Voltar à Página Inicial
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Capturar ID da assinatura da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const assinaturaId = urlParams.get('id');
+        document.getElementById('assinaturaId').textContent = assinaturaId;
+    </script>
+</body>
+</html>

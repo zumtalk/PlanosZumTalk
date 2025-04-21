@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos - Meu SaaS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-saira">
+    <div class="max-w-4xl mx-auto p-8 font-saira">
+        <img src="https://static.wixstatic.com/media/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png/v1/fill/w_205,h_47,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png" class="w-48 mx-auto mb-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-[#06618E]">Configure Seu Plano</h1>
+        <p class="text-center mb-4 text-gray-600">O PLANO BÁSICO é configurado com 1 (uma) Conexão Whatsapp e 3 (três) Atendentes.</p>
+        <div class="bg-white rounded-xl shadow-md p-8 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Número de Conexões WhatsApp:</label>
+                <select id="conexoesDropdown" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                </select>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Número de Atendentes:</label>
+                <select id="atendentesDropdown" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                </select>
+            </div>
+            
+            <div class="space-y-2">
+                <label class="flex items-center space-x-2 text-gray-700 font-medium cursor-pointer">
+                    <input type="checkbox" id="ativarAssistenteGPT" class="w-5 h-5 text-[#06618E] border-gray-300 rounded focus:ring-[#06618E]">
+                    <span>Ativar Assistente do Chat GPT</span>
+                </label>
+            </div>
+            
+            <button id="calcularBtn" class="w-full bg-[#06618E] hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
+                Calcular Preço
+            </button>
+        </div>
+
+        <div id="totalContainer" class="bg-[#06618E]/10 rounded-lg p-6 text-center">
+            <p class="text-xl font-semibold text-gray-700">Valor Total:</p>
+            <p class="text-3xl font-bold text-[#06618E] mt-2">R$ <span id="valorTotal"></span></p>
+        </div>
+
+        <a id="assinarLink" href="checkout.html" class="block mt-8 bg-green-600 hover:bg-green-700 text-white text-center font-medium py-4 px-8 rounded-xl transition-colors duration-200">
+            Assinar Plano Agora →
+        </a>
+    </div>
+
+    <script>
+        function calcularTotal() {
+            const conexoes = parseInt(document.getElementById('conexoesDropdown').value);
+            const atendentes = parseInt(document.getElementById('atendentesDropdown').value) || 3;
+            const assistenteGPTAtivado = document.getElementById('ativarAssistenteGPT').checked;
+            
+            // Obter valores configurados ou usar valores padrão
+            const valorPlanoBasico = parseFloat(localStorage.getItem('valorPlanoBasico')) || 100;
+            const valorConexao = parseFloat(localStorage.getItem('valorConexao')) || 50;
+            const valorAtendente = parseFloat(localStorage.getItem('valorAtendente')) || 30;
+            const valorAssistenteGPT = parseFloat(localStorage.getItem('valorAssistenteGPT')) || 80;
+            
+            let total = valorPlanoBasico + (conexoes * valorConexao) + (atendentes * valorAtendente);
+            
+            // Adicionar valor do assistente GPT se estiver ativado
+            if (assistenteGPTAtivado) {
+                total += valorAssistenteGPT;
+            }
+            
+            document.getElementById('valorTotal').textContent = total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            const valorNumerico = total.toFixed(2);
+            document.querySelector('a[href^="checkout.html"]').href = `checkout.html?valor=${valorNumerico}`;
+        }
+
+        document.getElementById('conexoesDropdown').addEventListener('change', calcularTotal);
+        document.getElementById('atendentesDropdown').addEventListener('change', calcularTotal);
+        document.getElementById('calcularBtn').addEventListener('click', calcularTotal);
+
+        // Calcular inicialmente ao carregar a página
+        calcularTotal();
+    </script>
+</body>
+</html>

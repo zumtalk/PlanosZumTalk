@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração de Planos - Administração</title>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-saira">
+    <script>
+        // Verificar se o usuário está logado
+        if (localStorage.getItem('logado') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <div class="max-w-4xl mx-auto p-8 font-saira">
+        <div class="flex justify-between items-center mb-8">
+            <img src="https://static.wixstatic.com/media/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png/v1/fill/w_205,h_47,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png" class="w-48">
+            <div class="flex space-x-4">
+                <a href="cadastro-admin.html" class="bg-[#06618E] hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                    Cadastrar Administradores
+                </a>
+                <button id="logoutBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                    Sair
+                </button>
+            </div>
+        </div>
+
+        <h1 class="text-3xl font-bold text-center mb-8 text-[#06618E]">Configuração de Planos</h1>
+        <p class="text-center mb-4 text-gray-600">Configure os valores base do plano básico</p>
+        
+        <div class="bg-white rounded-xl shadow-md p-8 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Valor do Plano Básico (R$):</label>
+                <input type="number" id="valorPlanoBasico" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="100">
+            </div>
+            
+            <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Valor por Conexão WhatsApp (R$):</label>
+                <input type="number" id="valorConexao" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="50">
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Valor por Atendente (R$):</label>
+                <input type="number" id="valorAtendente" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="30">
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Valor do Assistente do Chat GPT (R$):</label>
+                <input type="number" id="valorAssistenteGPT" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="80">
+            </div>
+            
+            <button id="salvarBtn" class="w-full bg-[#06618E] hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
+                Salvar Configurações
+            </button>
+        </div>
+
+        <div id="mensagem" class="mt-4 p-4 rounded-lg hidden"></div>
+
+        <a href="planos.html" class="block mt-8 bg-gray-600 hover:bg-gray-700 text-white text-center font-medium py-4 px-8 rounded-xl transition-colors duration-200">
+            Voltar para Planos
+        </a>
+    </div>
+
+    <script>
+        // Carregar valores salvos (se existirem)
+        document.addEventListener('DOMContentLoaded', function() {
+            const valorPlanoBasicoSalvo = localStorage.getItem('valorPlanoBasico');
+            const valorConexaoSalvo = localStorage.getItem('valorConexao');
+            const valorAtendenteSalvo = localStorage.getItem('valorAtendente');
+            const valorAssistenteGPTSalvo = localStorage.getItem('valorAssistenteGPT');
+            
+            if (valorPlanoBasicoSalvo) {
+                document.getElementById('valorPlanoBasico').value = valorPlanoBasicoSalvo;
+            }
+            
+            if (valorConexaoSalvo) {
+                document.getElementById('valorConexao').value = valorConexaoSalvo;
+            }
+            
+            if (valorAtendenteSalvo) {
+                document.getElementById('valorAtendente').value = valorAtendenteSalvo;
+            }
+
+            if (valorAssistenteGPTSalvo) {
+                document.getElementById('valorAssistenteGPT').value = valorAssistenteGPTSalvo;
+            }
+        });
+
+        // Salvar configurações
+        document.getElementById('salvarBtn').addEventListener('click', function() {
+            const valorPlanoBasico = document.getElementById('valorPlanoBasico').value;
+            const valorConexao = document.getElementById('valorConexao').value;
+            const valorAtendente = document.getElementById('valorAtendente').value;
+            const valorAssistenteGPT = document.getElementById('valorAssistenteGPT').value;
+            
+            if (!valorPlanoBasico || !valorConexao || !valorAtendente || !valorAssistenteGPT || 
+                valorPlanoBasico <= 0 || valorConexao <= 0 || valorAtendente <= 0 || valorAssistenteGPT <= 0) {
+                mostrarMensagem('Por favor, insira valores válidos maiores que zero.', 'bg-red-100 text-red-700');
+                return;
+            }
+            
+            localStorage.setItem('valorPlanoBasico', valorPlanoBasico);
+            localStorage.setItem('valorConexao', valorConexao);
+            localStorage.setItem('valorAtendente', valorAtendente);
+            localStorage.setItem('valorAssistenteGPT', valorAssistenteGPT);
+            
+            mostrarMensagem('Configurações salvas com sucesso!', 'bg-green-100 text-green-700');
+        });
+
+        
+        function mostrarMensagem(texto, classe) {
+            const mensagemEl = document.getElementById('mensagem');
+            mensagemEl.textContent = texto;
+            mensagemEl.className = `mt-4 p-4 rounded-lg ${classe}`;
+            mensagemEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                mensagemEl.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Função de logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('logado');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Administração</title>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-saira">
+    <div class="max-w-md mx-auto p-8 font-saira min-h-screen flex flex-col justify-center">
+        <img src="https://static.wixstatic.com/media/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png/v1/fill/w_205,h_47,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png" class="w-48 mx-auto mb-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-[#06618E]">Acesso Administrativo</h1>
+        
+        <div class="bg-white rounded-xl shadow-md p-8 space-y-6">
+            <div id="mensagem" class="p-4 rounded-lg hidden"></div>
+            
+            <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Usuário:</label>
+                <input type="text" id="usuario" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+            </div>
+            
+            <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Senha:</label>
+                <input type="password" id="senha" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+            </div>
+            
+            <button id="loginBtn" class="w-full bg-[#06618E] hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
+                Entrar
+            </button>
+        </div>
+
+        <a href="planos.html" class="block mt-8 text-center text-gray-600 hover:text-gray-800 transition-colors">
+            Voltar para Planos
+        </a>
+    </div>
+
+    <script>
+        // Verificar se já está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('logado') === 'true') {
+                window.location.href = 'admin.html';
+            }
+        });
+
+        // Função para mostrar mensagens
+        function mostrarMensagem(texto, classe) {
+            const mensagemEl = document.getElementById('mensagem');
+            mensagemEl.textContent = texto;
+            mensagemEl.className = `p-4 rounded-lg ${classe}`;
+            mensagemEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                mensagemEl.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Autenticação
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+            
+            // Credenciais para demonstração (em um sistema real, isso seria validado no servidor)
+            const usuarioCorreto = 'admin@zum.net.br';
+            const senhaCorreta = 'Chicotripa@123';
+            
+            // Verificar superadmin
+            if (usuario === usuarioCorreto && senha === senhaCorreta) {
+                localStorage.setItem('logado', 'true');
+                localStorage.setItem('isSuperAdmin', 'true');
+                window.location.href = 'admin.html';
+                return;
+            }
+            
+            // Verificar outros administradores cadastrados
+            const admins = JSON.parse(localStorage.getItem('administradores') || '[]');
+            const adminEncontrado = admins.find(admin => admin.email === usuario && admin.senha === senha);
+            
+            if (adminEncontrado) {
+                localStorage.setItem('logado', 'true');
+                localStorage.setItem('isSuperAdmin', 'false');
+                window.location.href = 'admin.html';
+            } else {
+                mostrarMensagem('Usuário ou senha incorretos.', 'bg-red-100 text-red-700');
+            }
+        });
+
+        // Permitir login ao pressionar Enter
+        document.getElementById('senha').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>

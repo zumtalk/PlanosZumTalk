@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Administradores - Administração</title>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-saira">
+    <script>
+        // Verificar se o usuário está logado
+        if (localStorage.getItem('logado') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <div class="max-w-4xl mx-auto p-8 font-saira">
+        <div class="flex justify-between items-center mb-8">
+            <img src="https://static.wixstatic.com/media/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png/v1/fill/w_205,h_47,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/f6efe5_9b2f4a503f14416b992b0e481753e309~mv2.png" class="w-48">
+            <div class="flex space-x-4">
+                <a href="admin.html" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                    Voltar
+                </a>
+                <button id="logoutBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                    Sair
+                </button>
+            </div>
+        </div>
+
+        <h1 class="text-3xl font-bold text-center mb-8 text-[#06618E]">Cadastro de Administradores</h1>
+        <p class="text-center mb-4 text-gray-600">Crie novos usuários administrativos para o sistema</p>
+        
+        <div class="bg-white rounded-xl shadow-md p-8 space-y-6">
+            <div id="mensagem" class="p-4 rounded-lg hidden"></div>
+            
+            <form id="formCadastro" class="space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-gray-700 font-medium">Login:</label>
+                    <input type="email" id="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                    <p class="text-sm text-gray-500">Use um email válido</p>
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="block text-gray-700 font-medium">Senha:</label>
+                    <input type="password" id="senha" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                    <p class="text-sm text-gray-500">A senha deve ter pelo menos 8 caracteres</p>
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="block text-gray-700 font-medium">Confirmar Senha:</label>
+                    <input type="password" id="confirmarSenha" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                </div>
+                
+                <button type="submit" class="w-full bg-[#06618E] hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200">
+                    Cadastrar Administrador
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-8 bg-white rounded-xl shadow-md p-8">
+            <h2 class="text-xl font-bold mb-4 text-[#06618E]">Administradores Cadastrados</h2>
+            <div id="listaAdmins" class="space-y-2">
+                <p class="text-gray-500 italic">Nenhum administrador adicional cadastrado.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para mostrar mensagens
+        function mostrarMensagem(texto, classe) {
+            const mensagemEl = document.getElementById('mensagem');
+            mensagemEl.textContent = texto;
+            mensagemEl.className = `p-4 rounded-lg ${classe}`;
+            mensagemEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                mensagemEl.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Carregar administradores existentes
+        function carregarAdministradores() {
+            const admins = JSON.parse(localStorage.getItem('administradores') || '[]');
+            const listaEl = document.getElementById('listaAdmins');
+            
+            if (admins.length === 0) {
+                listaEl.innerHTML = '<p class="text-gray-500 italic">Nenhum administrador adicional cadastrado.</p>';
+                return;
+            }
+            
+            listaEl.innerHTML = '';
+            admins.forEach((admin, index) => {
+                const adminEl = document.createElement('div');
+                adminEl.className = 'flex justify-between items-center p-3 bg-gray-50 rounded-lg';
+                adminEl.innerHTML = `
+                    <span class="font-medium">${admin.email}</span>
+                    <button class="text-red-600 hover:text-red-800" data-index="${index}">Remover</button>
+                `;
+                listaEl.appendChild(adminEl);
+            });
+            
+            // Adicionar eventos para remover administradores
+            document.querySelectorAll('#listaAdmins button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removerAdministrador(index);
+                });
+            });
+        }
+
+        // Remover administrador
+        function removerAdministrador(index) {
+            const admins = JSON.parse(localStorage.getItem('administradores') || '[]');
+            admins.splice(index, 1);
+            localStorage.setItem('administradores', JSON.stringify(admins));
+            carregarAdministradores();
+            mostrarMensagem('Administrador removido com sucesso.', 'bg-green-100 text-green-700');
+        }
+
+        // Cadastrar novo administrador
+        document.getElementById('formCadastro').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            
+            // Validações
+            if (!email.includes('@')) {
+                mostrarMensagem('Por favor, insira um email válido.', 'bg-red-100 text-red-700');
+                return;
+            }
+            
+            if (senha.length < 8) {
+                mostrarMensagem('A senha deve ter pelo menos 8 caracteres.', 'bg-red-100 text-red-700');
+                return;
+            }
+            
+            if (senha !== confirmarSenha) {
+                mostrarMensagem('As senhas não coincidem.', 'bg-red-100 text-red-700');
+                return;
+            }
+            
+            // Verificar se o email já existe
+            const admins = JSON.parse(localStorage.getItem('administradores') || '[]');
+            if (admins.some(admin => admin.email === email)) {
+                mostrarMensagem('Este email já está cadastrado.', 'bg-red-100 text-red-700');
+                return;
+            }
+            
+            // Adicionar novo administrador
+            admins.push({ email, senha });
+            localStorage.setItem('administradores', JSON.stringify(admins));
+            
+            // Limpar formulário
+            document.getElementById('email').value = '';
+            document.getElementById('senha').value = '';
+            document.getElementById('confirmarSenha').value = '';
+            
+            mostrarMensagem('Administrador cadastrado com sucesso!', 'bg-green-100 text-green-700');
+            carregarAdministradores();
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('logado');
+            window.location.href = 'login.html';
+        });
+
+        // Carregar administradores ao iniciar a página
+        document.addEventListener('DOMContentLoaded', carregarAdministradores);
+    </script>
+</body>
+</html>

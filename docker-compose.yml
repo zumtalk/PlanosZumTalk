@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+      - '2222:22'  # Expor porta SSH como 2222 para evitar conflitos
+    volumes:
+      - .:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_NAME: planos_zumtalk
+      DB_USER: root
+      DB_PASS: root
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: planos_zumtalk
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
